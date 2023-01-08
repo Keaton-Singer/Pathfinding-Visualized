@@ -1,0 +1,85 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  font-family: sans-serif;
+}
+
+Body {
+  background-color: rgb(0, 0, 0);
+}
+
+#Header {
+  position: fixed;
+  height: 70px;
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+}
+
+#HeaderTitle {
+  height: 70px;
+  line-height: 70px;
+  color: rgb(40, 100, 140);
+  font-size: 30px;
+  text-align: center;
+  margin-left: 15px;
+}
+
+#HeaderTitle:hover {
+  cursor: pointer;
+  color: rgb(70, 70, 70);
+}
+
+
+#OptionsPanel {
+  float: left;
+  text-align: center;
+  height: 25px;
+  width: 100%;
+  background-color: rgb(230, 230, 230);
+  border-bottom: solid 3px rgb(150, 150, 150);
+}
+
+#Option {
+  display: inline-block;
+  height: 25px;
+  width: 80px;
+  margin-left: min(40px, max(10px, 2.5vw));
+  margin-right: min(40px, max(10px, 2.5vw));
+  line-height: 25px;
+  font-size: 15px;
+  color: rgb(50, 50, 50);
+}
+
+#Option:hover {
+  background-color: rgb(210, 210, 210);
+  cursor: pointer;
+}
+
+#StartPause {
+  position: fixed;
+  height: 30px;
+  width: 100px;
+  text-align: center;
+  line-height: 30px;
+  color: rgb(230, 230, 230);
+  background-color: rgb(0, 150, 0);
+  margin: 110px 0px 0px 10px;
+  border: solid 2px rgb(230, 230, 230);
+  border-radius: 5px;
+  z-index: 1;
+}
+
+#GridContainer {
+  position: fixed;
+  width: 100%;
+  background-color: rgb(150, 0, 0);
+  margin-top: 98px;
+}
+
+#Pixel {
+  float: left;
+  height: 2vw;
+  width: 2vw;
+  outline: 1px solid black;
+  background-color: rgb(40, 100, 140);
+}
