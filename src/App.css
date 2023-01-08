@@ -5,7 +5,8 @@
 }
 
 Body {
-  background-color: rgb(0, 0, 0);
+  overflow-y: scroll;
+  background-color: rgb(210, 210, 210);
 }
 
 #Header {
@@ -13,6 +14,7 @@ Body {
   height: 70px;
   width: 100%;
   background-color: rgb(255, 255, 255);
+  z-index: 1;
 }
 
 #HeaderTitle {
@@ -30,8 +32,7 @@ Body {
 }
 
 
-#OptionsPanel {
-  float: left;
+#Categories {
   text-align: center;
   height: 25px;
   width: 100%;
@@ -39,10 +40,10 @@ Body {
   border-bottom: solid 3px rgb(150, 150, 150);
 }
 
-#Option {
+.Category {
   display: inline-block;
   height: 25px;
-  width: 80px;
+  width: 100px;
   margin-left: min(40px, max(10px, 2.5vw));
   margin-right: min(40px, max(10px, 2.5vw));
   line-height: 25px;
@@ -50,29 +51,61 @@ Body {
   color: rgb(50, 50, 50);
 }
 
-#Option:hover {
-  background-color: rgb(210, 210, 210);
+.Category:hover {
+  border-bottom: solid 3px rgb(50, 50, 50);
+  background-color: rgb(215, 215, 215);
   cursor: pointer;
 }
 
-#StartPause {
+#OptionsContainer {
+  text-align: center;
+  height: 25px;
+  width: 100%;
+}
+
+.Options {
+  display: inline-block;
+  width: 100px;
+  margin-left: min(40px, max(10px, 2.5vw));
+  margin-right: min(40px, max(10px, 2.5vw));
+  line-height: 25px;
+  font-size: 15px;
+  color: rgb(50, 50, 50);
+  z-index: 3;
+}
+
+.Option {
+  height: 25px;
+  width: 100%;
+  background-color: rgb(230, 230, 230);
+}
+
+.Option:hover {
+  background-color: rgb(215, 215, 215);
+  cursor: pointer;
+}
+
+#StartStop {
   position: fixed;
   height: 30px;
   width: 100px;
   text-align: center;
   line-height: 30px;
   color: rgb(230, 230, 230);
-  background-color: rgb(0, 150, 0);
   margin: 110px 0px 0px 10px;
   border: solid 2px rgb(230, 230, 230);
   border-radius: 5px;
-  z-index: 1;
+  z-index: 2;
+}
+
+#StartStop:hover {
+  filter: brightness(1.25);
+  cursor: pointer;
 }
 
 #GridContainer {
-  position: fixed;
+  position: absolute;
   width: 100%;
-  background-color: rgb(150, 0, 0);
   margin-top: 98px;
 }
 
@@ -80,6 +113,7 @@ Body {
   float: left;
   height: 2vw;
   width: 2vw;
-  outline: 1px solid black;
+  border: solid 1px black;
+  margin: -1px;
   background-color: rgb(40, 100, 140);
 }
