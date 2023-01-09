@@ -47,7 +47,7 @@ function App() {
 
   function Draw(bitIndex, action) {
     if (action === "drag" && mouseHeld.current === false) { return; }
-    if (startStop[0] !== "Start!" || tool === "") { return; }
+    if (startStop[0] !== "Start!" || tool === "" || path.current.length !== 0) { return; }
     else if (tool === "Move Origin" && bitIndex !== target && !walls.includes(bitIndex)) { setOrigin(bitIndex); }
     else if (tool === "Move Target" && bitIndex !== origin && !walls.includes(bitIndex)) { setTarget(bitIndex); }
     else if (bitIndex === origin || bitIndex === target) { return; }
@@ -69,24 +69,23 @@ function App() {
   async function DFS(pixel) {
     function stackPush(item) { stackDFS.current = [...stackDFS.current, item]; };
     if (stackDFS.current.length === 0) { stackPush(pixel); };
-    console.log(stackDFS.current);
+    let topItem = -1;
     while (stackDFS.current.length && startP.current === "Stop!") {
-      await sleep(50)
+      await sleep(1)
       let lastIndex = stackDFS.current.length - 1;
-      let topItem = stackDFS.current[lastIndex]
+      topItem = stackDFS.current[lastIndex];
       stackDFS.current = stackDFS.current.slice(0, lastIndex);
-      if (path.current.includes(topItem)) { continue; }
-      path.current = [...path.current, topItem]
+      if (topItem === target) { setPathHead(topItem); break; }
+      if (walls.includes(topItem)) { continue; }
       setPathHead(topItem);
-      if (topItem === target) { setPathHead(0); break; }
+      path.current = [...path.current, topItem];
       if (topItem % 33 > 0 && EmptyBit(topItem - 1, path.current)) { stackPush(topItem - 1); };
       if (topItem < 1056 && EmptyBit(topItem + 33, path.current)) { stackPush(topItem + 33); };
       if (topItem % 33 < 32 && EmptyBit(topItem + 1, path.current)) { stackPush(topItem + 1); };
       if (topItem > 32 && EmptyBit(topItem - 33, path.current)) { stackPush(topItem - 33); };
     };
-    console.log(stackDFS.current.length, 'afeter');
-    setStartStop(["Start!", "green"])
-    startP.current = "Start!"
+    if (topItem === target) { setStartStop(["Clear Path!", "grey"]); }
+    else { setStartStop(["Start!", "green"]); startP.current = "Start!"; };
   };
 
 
@@ -133,11 +132,19 @@ function App() {
   };
 
 
+  function CleanBitmap(extent) {
+    stackDFS.current = [];
+    path.current = [];
+    setPathHead(-1);
+  }
+
+
   function StartStop() {
-    if (startP.current === "Start!") { startP.current = "Stop!"; }
-    else if (startP.current === "Stop!") { startP.current = "Start!"; }
+    if (startP.current === "Stop!" || startP.current === "Clear Path!") { startP.current = "Start!"; }
+    else { startP.current = "Stop!"; }
     if (startStop[0] === "Start!") { setStartStop(["Stop!", "red"]); }
-    else if (startStop[1] === "Stop!") { setStartStop(["Start!", "green"]); };
+    else if (startStop[1] === "Stop!") { setStartStop(["Start!", "green"]); }
+    else { setStartStop(["Start!", "green"]); }
   };
   
 
