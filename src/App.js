@@ -1,28 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 
 function App() {
-  const [grid, setGrid] = useState([]);
+  const stackDFS = useRef([]);
+  const [bitmap, setBitmap] = useState([]);
   const [algorithm, setAlogirthm] = useState("DFS");
   const [algOpt, setAlgOpt] = useState("none");
   const [speedOpt, setSpeedOpt] = useState("none");
   const [toolsOpt, setToolsOpt] = useState("none");
   const [gridOpt, setGridOpt] = useState("none");
   const [startStop, setStartStop] = useState(["Start!", "green"]);
-  const [origin, setOrigin] = useState(800);
-  const [dest, setDest] = useState(288);
-  const [path, setPath] = useState([]);
-  const [barrier, setBarrier] = useState([]);
+  const startP = useRef("Start!");
+  const [origin, setOrigin] = useState(288);
+  const [target, setTarget] = useState(800);
+  const [walls, setWalls] = useState([89, 90, 91, 92, 93, 94, 95]);
+  const [pathHead, setPathHead] = useState(-1);
+  const path = useRef([]);
+  const [tool, setTool] = useState("Place Walls");
+  const mouseHeld = useRef("up");
   useEffect(() => {
-    GenerateGrid();
-  }, [origin, dest, path, barrier]);
+    GenerateBitmap();
+  }, [origin, target, walls, stackDFS.current, path.current, pathHead]);
   useEffect(() => {
+    // if (startStop[0] === "Stop!" && algorithm === "BFS") {
+    //   if (path.current.length > 0) BFS(path.current[path.current.length - 1]);
+    //   else BFS(origin);
+    // };
     if (startStop[0] === "Stop!" && algorithm === "DFS") {
-      if (path.length > 0) DFS(path[path.length - 1]);
+      if (path.current.length > 0) DFS(path.current[path.current.length - 1]);
       else DFS(origin);
     };
   }, [startStop]);
+  window.addEventListener('mousedown', () => {
+    mouseHeld.current = true;
+  });
+  window.addEventListener('mouseup', () => {
+    mouseHeld.current = false;
+  });
 
 
   const sleep = ms => new Promise(
@@ -30,29 +45,101 @@ function App() {
   );
 
 
-  function PixelClicked(index) {
-    if (index !== origin && index !== dest && !path.includes(index)) {
-      setBarrier(barrier => [...barrier, index]);
-      console.log(barrier); 
+  function Draw(bitIndex, action) {
+    if (action === "drag" && mouseHeld.current === false) { return; }
+    if (startStop[0] !== "Start!" || tool === "") { return; }
+    else if (tool === "Move Origin" && bitIndex !== target && !walls.includes(bitIndex)) { setOrigin(bitIndex); }
+    else if (tool === "Move Target" && bitIndex !== origin && !walls.includes(bitIndex)) { setTarget(bitIndex); }
+    else if (bitIndex === origin || bitIndex === target) { return; }
+    else if (tool === "Place Walls") { setWalls(walls => [...walls, bitIndex]); }
+    else if (tool === "Erase Walls") {
+      let wallsCopy = [...walls];
+      wallsCopy = wallsCopy.filter((index) => { return index !== bitIndex; });
+      setWalls([...wallsCopy]);
     };
   };
 
 
-  function GenerateGrid() {
-    let generatedPixels = [];
-    for (let index = 0; index < 1089; index++) {
-        generatedPixels.push(
-          <div id="Pixel" onClick={() => {PixelClicked(index)}} 
+  function EmptyBit(bitIndex) {
+    if (!walls.includes(bitIndex) && !path.current.includes(bitIndex)) { return true; };
+    return false;
+  };
+
+
+  async function DFS(pixel) {
+    function stackPush(item) { stackDFS.current = [...stackDFS.current, item]; };
+    if (stackDFS.current.length === 0) { stackPush(pixel); };
+    console.log(stackDFS.current);
+    while (stackDFS.current.length && startP.current === "Stop!") {
+      await sleep(50)
+      let lastIndex = stackDFS.current.length - 1;
+      let topItem = stackDFS.current[lastIndex]
+      stackDFS.current = stackDFS.current.slice(0, lastIndex);
+      if (path.current.includes(topItem)) { continue; }
+      path.current = [...path.current, topItem]
+      setPathHead(topItem);
+      if (topItem === target) { setPathHead(0); break; }
+      if (topItem % 33 > 0 && EmptyBit(topItem - 1, path.current)) { stackPush(topItem - 1); };
+      if (topItem < 1056 && EmptyBit(topItem + 33, path.current)) { stackPush(topItem + 33); };
+      if (topItem % 33 < 32 && EmptyBit(topItem + 1, path.current)) { stackPush(topItem + 1); };
+      if (topItem > 32 && EmptyBit(topItem - 33, path.current)) { stackPush(topItem - 33); };
+    };
+    console.log(stackDFS.current.length, 'afeter');
+    setStartStop(["Start!", "green"])
+    startP.current = "Start!"
+  };
+
+
+  // async function BFS(pixel) {
+  //   let queue = [pixel];
+  //   let pathCopy = path;
+  //   while (queue.length !== 0) {
+  //     let len = queue.length;
+  //     for (let index = 0; index < len; index++) {
+  //       await sleep(10)
+  //       let current = queue.shift();
+  //       if (current === dest) {
+  //         setCurr("");
+  //         return;
+  //       }
+  //       pathCopy.push(current);
+  //       setPath(path => [...path, current]);
+  //       setCurr(current);
+  //       if (current % 33 > 0 && EmptyPixel(current - 1, pathCopy) && !queue.includes(current - 1)) queue.push(current - 1);
+  //       if (current < 1056 && EmptyPixel(current + 33, pathCopy) && !queue.includes(current + 33)) queue.push(current + 33);
+  //       if (current % 33 < 32 && EmptyPixel(current + 1, pathCopy) && !queue.includes(current + 1)) queue.push(current + 1);
+  //       if (current > 32 && EmptyPixel(current - 33, pathCopy) && !queue.includes(current - 33)) queue.push(current - 33);
+  //     }
+  //   }
+  //   setCurr("");
+  // }
+
+
+  function GenerateBitmap() {
+    let generatedBits = [];
+    for (let bitIndex = 0; bitIndex < 1089; bitIndex++) {
+        generatedBits.push(
+          <div id="Bit" 
+            onMouseEnter={() => { Draw(bitIndex, "drag"); }} 
+            onMouseDown={() => { Draw(bitIndex, "click"); }} 
             style={{backgroundColor: 
-              (index === origin || path.includes(index)) ? "rgb(120, 210, 130)" : (index === dest) ? "rgb(210, 120, 130)" :
-              (barrier.includes(index) ? "rgb(40, 40, 40)" : "rgb(40, 100, 140)")
+              (bitIndex === pathHead) ? "green" : (bitIndex === origin || path.current.includes(bitIndex)) ? "rgb(120, 210, 130)" : (bitIndex === target) ? "rgb(210, 120, 130)" :
+              (walls.includes(bitIndex) ? "rgb(40, 40, 40)" : "rgb(40, 100, 140)")
             }}>
           </div>
         );
     };
-    setGrid(generatedPixels);
-    return generatedPixels;
+    setBitmap(generatedBits);
   };
+
+
+  function StartStop() {
+    if (startP.current === "Start!") { startP.current = "Stop!"; }
+    else if (startP.current === "Stop!") { startP.current = "Start!"; }
+    if (startStop[0] === "Start!") { setStartStop(["Stop!", "red"]); }
+    else if (startStop[1] === "Stop!") { setStartStop(["Start!", "green"]); };
+  };
+  
 
 
   function ToggleCategory(state, setFunction) {
@@ -62,33 +149,6 @@ function App() {
     };
     (state === "none") ? setFunction("block") : setFunction("none");
   };
-
-
-  function EmptyPixel(pixel) {
-    if (!barrier.includes(pixel) && !path.includes(pixel)) return true;
-    else return false;
-  };
-
-
-  async function DFS(pixel) {
-    let stack = [pixel];
-    while (stack.length !== 0 && stack[stack.length - 1] !== dest && startStop[0] === "Stop!") {
-      await sleep(100);
-      console.log(path);
-      let current = stack.pop()
-      setPath(path => [...path, current]);
-      if (current % 33 > 0 && EmptyPixel(current - 1)) stack.push(current - 1);
-      if (current < 1056 && EmptyPixel(current + 33)) stack.push(current + 33);
-      if (current % 33 < 32 && EmptyPixel(current + 1)) stack.push(current + 1);
-      if (current > 32 && EmptyPixel(current - 33)) stack.push(current - 33);
-    };
-  }  
-
-
-  function StartStop() {
-    (startStop[0] === "Start!") ? setStartStop(["Stop!", "red"]) : setStartStop(["Start!", "green"]);
-  };
-  
 
   return (
     <div className="App">
@@ -115,8 +175,8 @@ function App() {
         {startStop[0]}
       </div>
       <div id="Key"></div>
-      <div id="GridContainer">
-        {grid}
+      <div id="BitmapContainer">
+        {bitmap}
       </div> 
     </div>
   );

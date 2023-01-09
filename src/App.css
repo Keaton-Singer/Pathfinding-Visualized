@@ -103,13 +103,13 @@ Body {
   cursor: pointer;
 }
 
-#GridContainer {
+#BitmapContainer {
   position: absolute;
   width: 100%;
   margin-top: 98px;
 }
 
-#Pixel {
+#Bit {
   float: left;
   height: 3.03vw;
   width: 3.03vw;
