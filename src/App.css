@@ -111,9 +111,9 @@ Body {
 
 #Pixel {
   float: left;
-  height: 2vw;
-  width: 2vw;
+  height: 3.03vw;
+  width: 3.03vw;
+  border: solid 1px rgb(39, 39, 39);
   border: solid 1px black;
   margin: -1px;
-  background-color: rgb(40, 100, 140);
 }
