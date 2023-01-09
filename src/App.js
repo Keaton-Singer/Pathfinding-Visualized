@@ -3,6 +3,7 @@ import './App.css';
 
 
 function App() {
+  const speed = useRef(50);
   const stackDFS = useRef([]);
   const [bitmap, setBitmap] = useState([]);
   const [algorithm, setAlogirthm] = useState("DFS");
@@ -14,14 +15,14 @@ function App() {
   const startP = useRef("Start!");
   const [origin, setOrigin] = useState(288);
   const [target, setTarget] = useState(800);
-  const [walls, setWalls] = useState([89, 90, 91, 92, 93, 94, 95]);
+  const [walls, setWalls] = useState([]);
   const [pathHead, setPathHead] = useState(-1);
   const path = useRef([]);
-  const [tool, setTool] = useState("Place Walls");
+  const [tool, setTool] = useState("");
   const mouseHeld = useRef("up");
   useEffect(() => {
     GenerateBitmap();
-  }, [origin, target, walls, stackDFS.current, path.current, pathHead]);
+  }, [origin, target, walls, path.current, pathHead, tool]);
   useEffect(() => {
     // if (startStop[0] === "Stop!" && algorithm === "BFS") {
     //   if (path.current.length > 0) BFS(path.current[path.current.length - 1]);
@@ -32,6 +33,8 @@ function App() {
       else DFS(origin);
     };
   }, [startStop]);
+  
+  
   window.addEventListener('mousedown', () => {
     mouseHeld.current = true;
   });
@@ -47,9 +50,10 @@ function App() {
 
   function Draw(bitIndex, action) {
     if (action === "drag" && mouseHeld.current === false) { return; }
-    if (startStop[0] !== "Start!" || tool === "" || path.current.length !== 0) { return; }
-    else if (tool === "Move Origin" && bitIndex !== target && !walls.includes(bitIndex)) { setOrigin(bitIndex); }
-    else if (tool === "Move Target" && bitIndex !== origin && !walls.includes(bitIndex)) { setTarget(bitIndex); }
+    if (startStop[0] !== "Start!" || tool === "") { return; }
+    else if (tool === "Move Origin" && path.current.length !== 0) { return; }
+    else if (tool === "Move Origin" && bitIndex !== target && !walls.includes(bitIndex) && path.current.length === 0) { setOrigin(bitIndex); }
+    else if (tool === "Move Target" && bitIndex !== origin && !walls.includes(bitIndex) && !path.current.includes(bitIndex)) { setTarget(bitIndex); }
     else if (bitIndex === origin || bitIndex === target) { return; }
     else if (tool === "Place Walls") { setWalls(walls => [...walls, bitIndex]); }
     else if (tool === "Erase Walls") {
@@ -71,7 +75,7 @@ function App() {
     if (stackDFS.current.length === 0) { stackPush(pixel); };
     let topItem = -1;
     while (stackDFS.current.length && startP.current === "Stop!") {
-      await sleep(1)
+      await sleep(speed.current);
       let lastIndex = stackDFS.current.length - 1;
       topItem = stackDFS.current[lastIndex];
       stackDFS.current = stackDFS.current.slice(0, lastIndex);
@@ -84,10 +88,99 @@ function App() {
       if (topItem % 33 < 32 && EmptyBit(topItem + 1, path.current)) { stackPush(topItem + 1); };
       if (topItem > 32 && EmptyBit(topItem - 33, path.current)) { stackPush(topItem - 33); };
     };
-    if (topItem === target) { setStartStop(["Clear Path!", "grey"]); }
-    else { setStartStop(["Start!", "green"]); startP.current = "Start!"; };
+    if (topItem === target || stackDFS.current.length === 0) { setStartStop(["Clear Path!", "grey"]); }
   };
 
+
+  function GenerateBitmap() {
+    let generatedBits = [];
+    for (let bitIndex = 0; bitIndex < 1089; bitIndex++) {
+        generatedBits.push(
+          <div id="Bit" 
+            onMouseEnter={() => { Draw(bitIndex, "drag"); }} 
+            onMouseDown={() => { Draw(bitIndex, "click"); }} 
+            style={{backgroundColor: 
+              (bitIndex === pathHead) ? "green" : (bitIndex === origin || path.current.includes(bitIndex)) ? "rgb(120, 210, 130)" : (bitIndex === target) ? "rgb(210, 120, 130)" :
+              (walls.includes(bitIndex) ? "rgb(40, 40, 40)" : "rgb(40, 100, 140)")
+            }}>
+          </div>
+        );
+    };
+    setBitmap(generatedBits);
+  };
+
+
+  function CleanBitmap(extent) {
+    if (extent === "hard") {
+      setOrigin(288);
+      setTarget(800);
+      setWalls([]);
+    }
+    stackDFS.current = [];
+    path.current = [];
+    setPathHead(-1);
+  }
+
+
+  function StartStop() {
+    if (startP.current === "Stop!" ) { startP.current = "Start!"; }
+    else { startP.current = "Stop!"; };
+    if (startStop[0] === "Start!") { setStartStop(["Stop!", "red"]); }
+    else if (startStop[0] === "Stop!") { setStartStop(["Start!", "green"]);}
+    else { CleanBitmap(); setStartStop(["Start!", "green"]); }
+  };
+
+
+  function ToggleCategory(state, setFunction) {
+    let categories = [setAlgOpt, setSpeedOpt, setToolsOpt, setGridOpt];
+    for (let index = 0; index < 4; index++) {
+      categories[index]("none");
+    };
+    (state === "none") ? setFunction("block") : setFunction("none");
+  };
+
+  return (
+    <div className="App">
+      <div id="Header">
+        <div id="HeaderTitle" onMouseEnter={() => { mouseHeld.current = false; }}>
+          Pathfinding Visualized
+        </div>
+        <div id="Categories">
+          <div className="Category" onClick={() => {ToggleCategory(algOpt, setAlgOpt)}}>
+            Algorithms
+          </div>
+          <div className="Category" onClick={() => {ToggleCategory(speedOpt, setSpeedOpt)}}>
+            Speed
+            <div onClick={() => { speed.current = 1000; }}>Slow</div>
+            <div onClick={() => { speed.current = 50; }}>Medium</div>
+            <div onClick={() => { speed.current = 1; }}>Fast</div>
+          </div>
+          <div className="Category" onClick={() => {ToggleCategory(toolsOpt, setToolsOpt)}}>
+            Tools
+            <div onClick={() => { setTool("Move Origin"); }}>Move Origin</div>
+            <div onClick={() => { setTool("Move Target"); }}>Move Target</div>
+            <div onClick={() => { setTool("Place Walls"); }}>Place Walls</div>
+            <div onClick={() => { setTool("Erase Walls"); }}>Erase Walls</div>
+          </div>
+          <div className="Category" onClick={() => {ToggleCategory(gridOpt, setGridOpt)}}>
+            Bitmap
+            <div onClick={() => { CleanBitmap("hard"); }}>Reset Bitmap</div>
+            <div onClick={() => { CleanBitmap("soft"); }}>Clear Path</div>
+          </div>
+        </div>
+      </div>
+      <div id="StartStop" onClick={() => {StartStop()}} style={{backgroundColor: startStop[1]}}>
+        {startStop[0]}
+      </div>
+      <div id="Key"></div>
+      <div id="BitmapContainer">
+        {bitmap}
+      </div> 
+    </div>
+  );
+} 
+
+export default App;
 
   // async function BFS(pixel) {
   //   let queue = [pixel];
@@ -112,81 +205,3 @@ function App() {
   //   }
   //   setCurr("");
   // }
-
-
-  function GenerateBitmap() {
-    let generatedBits = [];
-    for (let bitIndex = 0; bitIndex < 1089; bitIndex++) {
-        generatedBits.push(
-          <div id="Bit" 
-            onMouseEnter={() => { Draw(bitIndex, "drag"); }} 
-            onMouseDown={() => { Draw(bitIndex, "click"); }} 
-            style={{backgroundColor: 
-              (bitIndex === pathHead) ? "green" : (bitIndex === origin || path.current.includes(bitIndex)) ? "rgb(120, 210, 130)" : (bitIndex === target) ? "rgb(210, 120, 130)" :
-              (walls.includes(bitIndex) ? "rgb(40, 40, 40)" : "rgb(40, 100, 140)")
-            }}>
-          </div>
-        );
-    };
-    setBitmap(generatedBits);
-  };
-
-
-  function CleanBitmap(extent) {
-    stackDFS.current = [];
-    path.current = [];
-    setPathHead(-1);
-  }
-
-
-  function StartStop() {
-    if (startP.current === "Stop!" || startP.current === "Clear Path!") { startP.current = "Start!"; }
-    else { startP.current = "Stop!"; }
-    if (startStop[0] === "Start!") { setStartStop(["Stop!", "red"]); }
-    else if (startStop[1] === "Stop!") { setStartStop(["Start!", "green"]); }
-    else { setStartStop(["Start!", "green"]); }
-  };
-  
-
-
-  function ToggleCategory(state, setFunction) {
-    let categories = [setAlgOpt, setSpeedOpt, setToolsOpt, setGridOpt];
-    for (let index = 0; index < 4; index++) {
-      categories[index]("none");
-    };
-    (state === "none") ? setFunction("block") : setFunction("none");
-  };
-
-  return (
-    <div className="App">
-      <div id="Header">
-        <div id="HeaderTitle">
-          Pathfinding Visualized
-        </div>
-        <div id="Categories">
-          <div className="Category" onClick={() => {ToggleCategory(algOpt, setAlgOpt)}}>
-            Algorithms
-          </div>
-          <div className="Category" onClick={() => {ToggleCategory(speedOpt, setSpeedOpt)}}>
-            Speed
-          </div>
-          <div className="Category" onClick={() => {ToggleCategory(toolsOpt, setToolsOpt)}}>
-            Tools
-          </div>
-          <div className="Category" onClick={() => {ToggleCategory(gridOpt, setGridOpt)}}>
-            Grid
-          </div>
-        </div>
-      </div>
-      <div id="StartStop" onClick={() => {StartStop()}} style={{backgroundColor: startStop[1]}}>
-        {startStop[0]}
-      </div>
-      <div id="Key"></div>
-      <div id="BitmapContainer">
-        {bitmap}
-      </div> 
-    </div>
-  );
-} 
-
-export default App;
