@@ -42,7 +42,7 @@ Body {
 
 .Category {
   display: inline-block;
-  height: 25px;
+  height: auto;
   width: 100px;
   margin-left: min(40px, max(10px, 2.5vw));
   margin-right: min(40px, max(10px, 2.5vw));
@@ -52,36 +52,23 @@ Body {
 }
 
 .Category:hover {
-  border-bottom: solid 3px rgb(50, 50, 50);
-  background-color: rgb(215, 215, 215);
+  border-top: solid 3px rgb(50, 50, 50);
+  margin-top: -3px;
   cursor: pointer;
 }
 
-#OptionsContainer {
-  text-align: center;
-  height: 25px;
-  width: 100%;
-}
-
-.Options {
-  display: inline-block;
-  width: 100px;
-  margin-left: min(40px, max(10px, 2.5vw));
-  margin-right: min(40px, max(10px, 2.5vw));
-  line-height: 25px;
-  font-size: 15px;
-  color: rgb(50, 50, 50);
-  z-index: 3;
-}
-
 .Option {
+  position: relative;
   height: 25px;
   width: 100%;
   background-color: rgb(230, 230, 230);
+  color: rgb(50, 50, 50);
+  z-index: 10;
 }
 
 .Option:hover {
-  background-color: rgb(215, 215, 215);
+  background-color: rgb(50, 50, 50);
+  color: rgb(230, 230, 230);
   cursor: pointer;
 }
 
