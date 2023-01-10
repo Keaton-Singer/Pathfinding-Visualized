@@ -1,6 +1,6 @@
-![image info](./images/DFSComplex)
-![image info](./images/BFSComplex)
-![image info](./images/BFS)
+![image info](./images/DFSComplex.png)
+![image info](./images/BFSComplex.png)
+![image info](./images/BFS.png)
 
 
 # Getting Started with Create React App
