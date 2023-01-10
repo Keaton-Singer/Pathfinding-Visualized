@@ -109,7 +109,8 @@ function App() {
     function queueAppend(item) { queueBFS.current = [...queueBFS.current, item]; };
     if (queueBFS.current.length === 0) { queueAppend(currentBit); };
     let nextItem = -1;
-    while (queueBFS.length !== 0) {
+    while (queueBFS.current.length !== 0) {
+      console.log(queueBFS.current);
       await sleep(speed.current)
       if (startPersist.current === "Start!") { break; }
       let lastIndex = queueBFS.current.length - 1;
