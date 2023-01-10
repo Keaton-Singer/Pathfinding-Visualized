@@ -24,7 +24,7 @@ function App() {
   const [origin, setOrigin] = useState(Math.round(TOTAL * 0.66) - 1);
   const [target, setTarget] = useState(Math.round(TOTAL * 0.34));
   const [walls, setWalls] = useState([]);
-  const [tool, setTool] = useState("");
+  const [tool, setTool] = useState("None");
   
   
   useEffect(() => {
@@ -59,7 +59,7 @@ function App() {
   function Draw(bitIndex, action) {
     if (mouseHeld.current === true) { ToggleCategory(optionsClose, setOptionsClose); };
     if (action === "drag" && mouseHeld.current === false) { return; }
-    if (startPersist.current !== "Start!" || tool === "") { return; }
+    if (startPersist.current !== "Start!" || tool === "None") { return; }
     else if (tool === "Move Origin" && path.current.length !== 0) { return; }
     else if (tool === "Move Origin" && bitIndex !== target && 
       !walls.includes(bitIndex) && path.current.length === 0) { setOrigin(bitIndex); }
@@ -275,6 +275,7 @@ function App() {
         <div className="Key"><div id="Origin"></div><div>PATH</div></div>
         <div className="Key"><div id="Wall"></div><div>WALL</div></div>
       </div>
+      <div id="ToolSelected">TOOL SELECTED: <div id="ActualTool">{tool}</div></div>
       <div id="BitmapContainer"
         onClick={() => { ToggleCategory(optionsClose, setOptionsClose); }}>
         {bitmap}

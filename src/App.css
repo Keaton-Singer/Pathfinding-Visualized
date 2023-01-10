@@ -102,6 +102,11 @@ Body {
   z-index: 1;
 }
 
+#StartStop:hover {
+  filter: brightness(1.25);
+  cursor: pointer;
+}
+
 #KeyContainer {
   display: inline-block;
   position: fixed;
@@ -154,9 +159,25 @@ Body {
   background-color: rgb(40, 40, 40);
 }
 
-#StartStop:hover {
-  filter: brightness(1.25);
-  cursor: pointer;
+#ToolSelected {
+  display: inline-block;
+  position: fixed;
+  height: 30px;
+  width: 100px;
+  text-align: center;
+  font-size: 10px;
+  padding-top: 10px;
+  font-size: 10px;
+  color: rgb(50, 50, 50);
+  margin: 336px 0px 0px 10px;
+  background-color: rgb(230, 230, 230);
+  border: solid 2px rgb(50, 50, 50);
+  border-radius: 5px;
+  z-index: 1;
+}
+
+#ActualTool {
+  margin-top: 2px;
 }
 
 #BitmapContainer {
