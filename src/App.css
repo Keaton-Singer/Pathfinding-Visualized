@@ -6,7 +6,7 @@
 
 Body {
   overflow-y: scroll;
-  background-color: rgb(210, 210, 210);
+  background-color: rgb(25, 25, 25);
 }
 
 #Header {
@@ -26,12 +26,6 @@ Body {
   margin-left: 15px;
 }
 
-#HeaderTitle:hover {
-  cursor: pointer;
-  color: rgb(70, 70, 70);
-}
-
-
 #Categories {
   position: fixed;
   text-align: center;
@@ -40,7 +34,7 @@ Body {
   height: 25px;
   width: 100%;
   background-color: rgb(230, 230, 230);
-  border-bottom: solid 3px rgb(150, 150, 150);
+  border-bottom: solid 3px rgb(50, 50, 50);
   z-index: 5;
 }
 
@@ -63,11 +57,33 @@ Body {
 .Option {
   height: 25px;
   width: 100%;
+  margin-left: -3px;
+  border-color: rgb(50, 50, 50);
+  border-width: 0px 3px 0px 3px;
+  border-style: solid;
   background-color: rgb(230, 230, 230);
   color: rgb(50, 50, 50);
 }
 
 .Option:hover {
+  background-color: rgb(50, 50, 50);
+  color: rgb(230, 230, 230);
+  cursor: pointer;
+}
+
+.OptionBottom {
+  height: 25px;
+  width: 100%;
+  margin-left: -3px;
+  background-color: rgb(230, 230, 230);
+  color: rgb(50, 50, 50);
+  border-radius: 0px 0px 5px 5px;
+  border-color: rgb(50, 50, 50);
+  border-width: 0px 3px 3px 3px;
+  border-style: solid;
+}
+
+.OptionBottom:hover {
   background-color: rgb(50, 50, 50);
   color: rgb(230, 230, 230);
   cursor: pointer;
@@ -79,11 +95,63 @@ Body {
   width: 100px;
   text-align: center;
   line-height: 30px;
-  color: rgb(230, 230, 230);
+  color: rgb(210, 210, 210);
   margin: 110px 0px 0px 10px;
-  border: solid 2px rgb(230, 230, 230);
+  border: solid 2px rgb(210, 210, 210);
   border-radius: 5px;
   z-index: 1;
+}
+
+#KeyContainer {
+  display: inline-block;
+  position: fixed;
+  height: 166px;
+  width: 100px;
+  text-align: center;
+  font-size: 10px;
+  color: rgb(50, 50, 50);
+  margin: 156px 0px 0px 10px;
+  background-color: rgb(230, 230, 230);
+  border: solid 2px rgb(50, 50, 50);
+  border-radius: 5px;
+  z-index: 1;
+}
+
+.Key {
+  display: flex;
+  line-height: 42px;
+}
+
+#Origin {
+  position: relative;
+  height: 20px;
+  width: 20px;
+  margin: 10px 10px 10px 10px;
+  background-color: rgb(120, 210, 130)
+}
+
+#Visiting {
+  position: relative;
+  margin: 10px 10px 10px 10px;
+  height: 20px;
+  width: 20px;
+  background-color: green;
+}
+
+#Target {
+  position: relative;
+  height: 20px;
+  width: 20px;
+  margin: 10px 10px 10px 10px;
+  background-color: rgb(210, 120, 130);
+}
+
+#Wall {
+  position: relative;
+  height: 20px;
+  width: 20px;
+  margin: 10px 10px 10px 10px;
+  background-color: rgb(40, 40, 40);
 }
 
 #StartStop:hover {
@@ -101,7 +169,6 @@ Body {
   float: left;
   height: 3.03vw;
   width: 3.03vw;
-  border: solid 1px rgb(202, 131, 50);
   border: solid 1px black;
   margin: -1px;
 }

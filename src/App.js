@@ -3,9 +3,14 @@ import './App.css';
 
 
 function App() {
+  
+  
+  const path = useRef([]);
   const speed = useRef(50);
   const stackDFS = useRef([]);
   const queueBFS = useRef([]);
+  const mouseHeld = useRef("up");
+  const startPersist = useRef("Start!");
   const [bitmap, setBitmap] = useState([]);
   const [algorithm, setAlgorithm] = useState("DFS");
   const [algOption, setAlgOption] = useState("hidden");
@@ -13,17 +18,18 @@ function App() {
   const [toolsOption, setToolsOption] = useState("hidden");
   const [bitmapOption, setBitmapOption] = useState("hidden");
   const [startButton, setStartButton] = useState("Start!");
-  const startPersist = useRef("Start!");
+  const [pathHead, setPathHead] = useState(-1);
   const [origin, setOrigin] = useState(800);
   const [target, setTarget] = useState(288);
   const [walls, setWalls] = useState([]);
-  const [pathHead, setPathHead] = useState(-1);
-  const path = useRef([]);
   const [tool, setTool] = useState("");
-  const mouseHeld = useRef("up");
+  
+  
   useEffect(() => {
     GenerateBitmap();
   }, [origin, target, walls, path.current, pathHead, tool]);
+  
+  
   useEffect(() => {
     if (startButton !== "Stop!") { return; }
     else if (algorithm === "DFS" && path.current.length === 0) { DFS(origin); }
@@ -31,9 +37,13 @@ function App() {
     else if (algorithm === "BFS" && path.current.length === 0) { BFS(origin); }
     else if (algorithm === "BFS") { BFS(path.current[path.current.length - 1]); }
   }, [startButton]);
+
+
   window.addEventListener('mousedown', () => {
     mouseHeld.current = true;
   });
+
+
   window.addEventListener('mouseup', () => {
     mouseHeld.current = false;
   });
@@ -46,13 +56,13 @@ function App() {
 
   function Draw(bitIndex, action) {
     if (action === "drag" && mouseHeld.current === false) { return; }
-    if (startButton !== "Start!" || tool === "") { return; }
+    if (startPersist.current !== "Start!" || tool === "") { return; }
     else if (tool === "Move Origin" && path.current.length !== 0) { return; }
     else if (tool === "Move Origin" && bitIndex !== target && !walls.includes(bitIndex) && path.current.length === 0) { setOrigin(bitIndex); }
     else if (tool === "Move Target" && bitIndex !== origin && !walls.includes(bitIndex) && !path.current.includes(bitIndex)) { setTarget(bitIndex); }
     else if (bitIndex === origin || bitIndex === target) { return; }
     else if (tool === "Place Walls") { setWalls(walls => [...walls, bitIndex]); }
-    else if (tool === "Erase Walls") {
+    else if (tool === "Erase Walls" && path.current.length === 0) {
       let wallsCopy = [...walls];
       wallsCopy = wallsCopy.filter((index) => { return index !== bitIndex; });
       setWalls([...wallsCopy]);
@@ -160,11 +170,10 @@ function App() {
 
   function ToggleCategory(state, setFunction) {
     let categories = [setAlgOption, setSpeedOption, setToolsOption, setBitmapOption];
-    for (let index = 0; index < 4; index++) {
-      categories[index]("hidden");
-    };
+    for (let index = 0; index < 4; index++) { categories[index]("hidden"); };
     (state === "hidden") ? setFunction("visible") : setFunction("hidden");
   };
+
 
   return (
     <div className="App">
@@ -181,21 +190,17 @@ function App() {
               style={{visibility: algOption}}>
               DFS
             </div>
-            <div className="Option" 
+            <div className="OptionBottom" 
               onClick={() => { setAlgorithm("BFS"); CleanBitmap("partial"); }}
               style={{visibility: algOption}}>
               BFS
-            </div>
-            <div className="Dummy"
-              style={{visibility: algOption}}>
-              .
             </div>
           </div>
           <div className="Category" 
             onClick={() => {ToggleCategory(speedOption, setSpeedOption)}}>
             Speed
             <div className="Option" 
-              onClick={() => { speed.current = 1000; }}
+              onClick={() => { speed.current = 500; }}
               style={{visibility: speedOption}}>
               Slow
             </div>
@@ -204,8 +209,8 @@ function App() {
               style={{visibility: speedOption}}>
               Medium
             </div>
-            <div className="Option" 
-              onClick={() => { speed.current = 1; }}
+            <div className="OptionBottom" 
+              onClick={() => { speed.current = 5; }}
               style={{visibility: speedOption}}>
               Fast
             </div>
@@ -227,7 +232,7 @@ function App() {
               style={{visibility: toolsOption}}>
               Place Walls
             </div>
-            <div className="Option" 
+            <div className="OptionBottom" 
               onClick={() => { setTool("Erase Walls"); }}
               style={{visibility: toolsOption}}>
               Erase Walls
@@ -241,7 +246,7 @@ function App() {
               style={{visibility: bitmapOption}}>
               Clear Path
             </div>
-            <div className="Option" 
+            <div className="OptionBottom" 
               onClick={() => { CleanBitmap("full"); }}
               style={{visibility: bitmapOption}}>
               Reset Bitmap
@@ -255,7 +260,12 @@ function App() {
                                  (startButton === "Stop!") ? "red" : "grey"}}>
         {startButton}
       </div>
-      <div id="Key"></div>
+      <div id="KeyContainer">
+        <div className="Key"><div id="Visiting"></div><div>VISITING</div></div>
+        <div className="Key"><div id="Target"></div><div>TARGET</div></div>
+        <div className="Key"><div id="Origin"></div><div>PATH</div></div>
+        <div className="Key"><div id="Wall"></div><div>WALL</div></div>
+      </div>
       <div id="BitmapContainer">
         {bitmap}
       </div> 
