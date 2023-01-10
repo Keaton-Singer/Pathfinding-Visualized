@@ -14,8 +14,8 @@ function App() {
   const [bitmapOption, setBitmapOption] = useState("hidden");
   const [startButton, setStartButton] = useState("Start!");
   const startPersist = useRef("Start!");
-  const [origin, setOrigin] = useState(272);
-  const [target, setTarget] = useState(816);
+  const [origin, setOrigin] = useState(800);
+  const [target, setTarget] = useState(288);
   const [walls, setWalls] = useState([]);
   const [pathHead, setPathHead] = useState(-1);
   const path = useRef([]);
@@ -136,8 +136,8 @@ function App() {
 
   function CleanBitmap(coverage) {
     if (coverage === "full") {
-      setOrigin(288);
-      setTarget(800);
+      setOrigin(800);
+      setTarget(288);
       setWalls([]);
     }
     startPersist.current = "Start!"; 
@@ -173,7 +173,7 @@ function App() {
           Pathfinding Visualized
         </div>
         <div id="Categories">
-          <div className="Category" 
+          <div className="Category"
             onClick={() => {ToggleCategory(algOption, setAlgOption)}}>
             Algorithms
             <div className="Option" 
