@@ -2,6 +2,7 @@
 ![image info](./images/BFSComplex.png)
 ![image info](./images/BFS.png)
 
+Note: The "Erase Walls" and "Move Origin" tools cannot be used after a path has been initiated. Also, the "Place Walls" and "Move Target" tools can only be used while the pathfinding algorithm is stopped.
 
 # Getting Started with Create React App
 
