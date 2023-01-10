@@ -1,3 +1,8 @@
+![image info](./images/DFSComplex)
+![image info](./images/BFSComplex)
+![image info](./images/BFS)
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
