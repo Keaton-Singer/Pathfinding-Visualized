@@ -1,4 +1,4 @@
-Note: The "Erase Walls" and "Move Origin" tools cannot be used after a path has been initiated. Also, the "Place Walls" and "Move Target" tools can only be used while the pathfinding algorithm is stopped.
+Note: The "Erase Walls" and "Move Origin" tools cannot be used after a path has been initiated. Also, the "Place Walls" and "Move Target" tools can only be used before a path has started, or while the pathfinding algorithm is stopped.
 
 ![image info](./images/DFSComplex.png)
 ![image info](./images/BFSComplex.png)
