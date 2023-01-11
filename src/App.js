@@ -187,7 +187,7 @@ function App() {
         <div id="HeaderTitle" 
           onMouseEnter={() => { mouseHeld.current = false; }}
           onClick={() => { ToggleCategory(optionsClose, setOptionsClose); }}>
-          Pathfinding Visualized
+          Searching Visualized
         </div>
         <div id="Categories">
           <div className="Category"
