@@ -272,7 +272,7 @@ function App() {
         onClick={() => { ToggleCategory(optionsClose, setOptionsClose); }}>
         <div className="Key"><div id="Visiting"></div><div>VISITING</div></div>
         <div className="Key"><div id="Target"></div><div>TARGET</div></div>
-        <div className="Key"><div id="Origin"></div><div>PATH</div></div>
+        <div className="Key"><div id="Origin"></div><div>VISITED</div></div>
         <div className="Key"><div id="Wall"></div><div>WALL</div></div>
       </div>
       <div id="ToolSelected">TOOL SELECTED: <div id="ActualTool">{tool}</div></div>
